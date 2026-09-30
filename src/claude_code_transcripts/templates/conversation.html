@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block content %}
+        <h1>Agent session transcript</h1>
+        <p class="cogent-eyebrow">{{ message_count }} messages · Full conversation</p>
+        {{ messages_html|safe }}
+        {% if not message_count %}<p>No messages in this session.</p>{% endif %}
+{% endblock %}

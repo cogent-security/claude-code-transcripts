@@ -1302,7 +1302,25 @@ def generate_index_pagination_html(total_pages):
     return _macros.index_pagination(total_pages)
 
 
-def generate_html(json_path, output_dir, github_repo=None):
+def generate_single_page(loglines, output_dir):
+    messages = []
+    for entry in loglines:
+        if entry.get("message"):
+            rendered = render_message(
+                entry.get("type"),
+                json.dumps(entry["message"]),
+                entry.get("timestamp", ""),
+            )
+            if rendered:
+                messages.append(rendered)
+    content = get_template("conversation.html").render(
+        css=CSS, js=JS, messages_html="".join(messages), message_count=len(messages)
+    )
+    (output_dir / "index.html").write_text(content, encoding="utf-8")
+    print(f"Generated {output_dir.resolve() / 'index.html'} ({len(messages)} messages)")
+
+
+def generate_html(json_path, output_dir, github_repo=None, *, single_page=False):
     output_dir = Path(output_dir)
     output_dir.mkdir(exist_ok=True)
 
@@ -1324,6 +1342,9 @@ def generate_html(json_path, output_dir, github_repo=None):
     # Set module-level variable for render functions
     global _github_repo
     _github_repo = github_repo
+
+    if single_page:
+        return generate_single_page(loglines, output_dir)
 
     conversations = []
     current_conv = None
@@ -1675,7 +1696,12 @@ def fetch_url_to_tempfile(url):
     is_flag=True,
     help="Open the generated index.html in your default browser (default if no -o specified).",
 )
-def json_cmd(json_file, output, output_auto, repo, gist, include_json, open_browser):
+@click.option(
+    "--single-page", is_flag=True, help="Render the entire conversation in index.html."
+)
+def json_cmd(
+    json_file, output, output_auto, repo, gist, include_json, open_browser, single_page
+):
     """Convert a Claude Code session JSON/JSONL file or URL to HTML."""
     # Handle URL input
     if is_url(json_file):
@@ -1705,7 +1731,7 @@ def json_cmd(json_file, output, output_auto, repo, gist, include_json, open_brow
         )
 
     output = Path(output)
-    generate_html(json_file_path, output, github_repo=repo)
+    generate_html(json_file_path, output, github_repo=repo, single_page=single_page)
 
     # Show output directory
     click.echo(f"Output: {output.resolve()}")
@@ -1782,7 +1808,9 @@ def format_session_for_display(session_data):
     return f"{repo_display:30}  {date_display:19}  {title}"
 
 
-def generate_html_from_session_data(session_data, output_dir, github_repo=None):
+def generate_html_from_session_data(
+    session_data, output_dir, github_repo=None, *, single_page=False
+):
     """Generate HTML from session data dict (instead of file path)."""
     output_dir = Path(output_dir)
     output_dir.mkdir(exist_ok=True, parents=True)
@@ -1798,6 +1826,9 @@ def generate_html_from_session_data(session_data, output_dir, github_repo=None):
     # Set module-level variable for render functions
     global _github_repo
     _github_repo = github_repo
+
+    if single_page:
+        return generate_single_page(loglines, output_dir)
 
     conversations = []
     current_conv = None

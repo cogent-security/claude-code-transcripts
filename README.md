@@ -2,6 +2,12 @@
 
 ## Cogent edition
 
+Use `json SESSION --single-page -o OUTPUT` for one full conversation in
+`index.html`, without an index or pagination. This is the mode used by
+`generate_candidate`. Messages preview at up to 24rem tall; **Show full message**
+reveals all of the message, including long prompts and tool output, and
+**Show less** restores the preview. Header clicks still collapse the entire card.
+
 This fork adds a light Cogent theme: Geist / Geist Mono typography, charcoal
 text, slate metadata, thin borders and restrained orange accents. Fonts are
 bundled under the SIL Open Font License and embedded in the HTML, so no font

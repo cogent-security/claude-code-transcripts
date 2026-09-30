@@ -612,10 +612,16 @@ document.querySelectorAll('.truncatable').forEach(function(wrapper) {
 .local-message > summary:focus-visible { outline: 2px solid #ab571d; outline-offset: -2px; }
 .local-message > summary .role-label { flex: 1; }
 .local-message-link { font-size: 0.85rem; margin-left: auto; padding-left: 12px; }
+.message-preview { max-height: 24rem; overflow: hidden; }
+.message-preview.is-expanded { max-height: none; overflow: visible; }
+.message-preview .truncatable.truncated .truncatable-content { max-height: none; overflow: visible; }
+.message-preview .truncatable::after, .message-preview .expand-btn { display: none !important; }
+.message-size-toggle { display: block; margin: 8px 20px 16px; padding: 8px 12px; border: 1px solid var(--cogent-border); border-radius: 4px; background: var(--card-bg); color: #ab571d; cursor: pointer; }
+.message-size-toggle[hidden] { display: none; }
 </style>
 <script>
 (() => {
-  document.querySelectorAll('.message, .index-item').forEach(card => {
+  document.querySelectorAll('.message, .index-item').forEach((card, index) => {
     const header = card.querySelector('.message-header, .index-item-header');
     if (!header) return;
     const details = document.createElement('details');
@@ -636,8 +642,31 @@ document.querySelectorAll('.truncatable').forEach(function(wrapper) {
       }
     }
     header.remove();
-    details.append(summary, ...card.childNodes);
+    const body = document.createElement('div');
+    body.className = 'message-preview';
+    body.id = `message-body-${index}`;
+    body.append(...card.childNodes);
+    const toggle = document.createElement('button');
+    toggle.type = 'button';
+    toggle.className = 'message-size-toggle';
+    toggle.textContent = 'Show full message';
+    toggle.setAttribute('aria-controls', body.id);
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.addEventListener('click', () => {
+      const expanded = body.classList.toggle('is-expanded');
+      toggle.textContent = expanded ? 'Show less' : 'Show full message';
+      toggle.setAttribute('aria-expanded', String(expanded));
+      if (!expanded) summary.scrollIntoView({ block: 'nearest' });
+    });
+    details.append(summary, body, toggle);
     card.append(details);
+    const updateToggle = () => {
+      if (details.open) toggle.hidden = !body.classList.contains('is-expanded') && body.scrollHeight <= body.clientHeight + 1;
+    };
+    new ResizeObserver(updateToggle).observe(body);
+    details.addEventListener('toggle', updateToggle);
+    body.addEventListener('click', () => requestAnimationFrame(updateToggle));
+    updateToggle();
   });
   const revealLinkedMessage = () => {
     const target = document.getElementById(location.hash.slice(1));
