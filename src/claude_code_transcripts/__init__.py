@@ -1,5 +1,6 @@
 """Convert Claude Code session JSON to a clean mobile-friendly HTML page with pagination."""
 
+import base64
 import json
 import html
 import os
@@ -24,6 +25,12 @@ _jinja_env = Environment(
     loader=PackageLoader("claude_code_transcripts", "templates"),
     autoescape=True,
 )
+_jinja_env.globals["cogent_fonts"] = {
+    name: base64.b64encode(
+        (Path(__file__).parent / "fonts" / f"{name}.woff2").read_bytes()
+    ).decode("ascii")
+    for name in ("Geist", "GeistMono")
+}
 
 # Load macros template and expose macros
 _macros_template = _jinja_env.get_template("macros.html")

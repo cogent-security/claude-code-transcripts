@@ -1,5 +1,26 @@
 # claude-code-transcripts
 
+## Cogent edition
+
+This fork adds a light Cogent theme: Geist / Geist Mono typography, charcoal
+text, slate metadata, thin borders and restrained orange accents. Fonts are
+bundled under the SIL Open Font License and embedded in the HTML, so no font
+CDN, account, or server is needed. Upstream CLI commands remain unchanged.
+
+Click a message header to collapse or reopen it, or use Tab and Enter/Space.
+Index cards also collapse; **Open conversation** opens the full transcript.
+Existing tool expanders, pagination, timestamps and search remain available.
+Transcripts may contain secrets or customer data; review before sharing.
+
+Install this fork from a reviewed commit (replace `COMMIT_SHA`):
+
+```sh
+uvx --from 'git+https://github.com/cogent-security/claude-code-transcripts.git@COMMIT_SHA' \
+  claude-code-transcripts json session.jsonl -o ./transcript --open
+```
+
+---
+
 [![PyPI](https://img.shields.io/pypi/v/claude-code-transcripts.svg)](https://pypi.org/project/claude-code-transcripts/)
 [![Changelog](https://img.shields.io/github/v/release/simonw/claude-code-transcripts?include_prereleases&label=changelog)](https://github.com/simonw/claude-code-transcripts/releases)
 [![Tests](https://github.com/simonw/claude-code-transcripts/workflows/Test/badge.svg)](https://github.com/simonw/claude-code-transcripts/actions?query=workflow%3ATest)

@@ -1,0 +1,44 @@
+<style id="local-message-controls">
+.local-message > summary { cursor: pointer; list-style: none; }
+.local-message > summary::-webkit-details-marker { display: none; }
+.local-message > summary::before { content: "▸"; margin-right: 8px; }
+.local-message[open] > summary::before { content: "▾"; }
+.local-message > summary:focus-visible { outline: 2px solid #ab571d; outline-offset: -2px; }
+.local-message > summary .role-label { flex: 1; }
+.local-message-link { font-size: 0.85rem; margin-left: auto; padding-left: 12px; }
+</style>
+<script>
+(() => {
+  document.querySelectorAll('.message, .index-item').forEach(card => {
+    const header = card.querySelector('.message-header, .index-item-header');
+    if (!header) return;
+    const details = document.createElement('details');
+    details.className = 'local-message';
+    details.open = true;
+    const summary = document.createElement('summary');
+    summary.className = header.className;
+    summary.title = 'Click to collapse or expand this message';
+    summary.append(...header.childNodes);
+    if (card.classList.contains('index-item')) {
+      const originalLink = card.querySelector('a');
+      if (originalLink) {
+        const link = document.createElement('a');
+        link.href = originalLink.getAttribute('href');
+        link.className = 'local-message-link';
+        link.textContent = 'Open conversation ↗';
+        summary.append(link);
+      }
+    }
+    header.remove();
+    details.append(summary, ...card.childNodes);
+    card.append(details);
+  });
+  const revealLinkedMessage = () => {
+    const target = document.getElementById(location.hash.slice(1));
+    const details = target?.closest('.message')?.querySelector('.local-message');
+    if (details) details.open = true;
+  };
+  window.addEventListener('hashchange', revealLinkedMessage);
+  revealLinkedMessage();
+})();
+</script>

@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Claude Code transcript{% endblock %}</title>
     <style>{{ css|safe }}</style>
+    <style>{% include "cogent.css" %}</style>
 </head>
 <body>
     <div class="container">
+        <header class="cogent-masthead">
+            <span class="cogent-wordmark">Cogent<span aria-hidden="true">.</span></span>
+            <span class="cogent-eyebrow">Agent session transcript</span>
+        </header>
 {%- block content %}{% endblock %}
+        <footer class="cogent-footer">Cogent / Session archive</footer>
     </div>
     <script>{{ js|safe }}</script>
+    {% include "message_controls.html" %}
 </body>
 </html>
