@@ -10,11 +10,12 @@
 <body>
     <div class="container">
         <header class="cogent-masthead">
-            <span class="cogent-wordmark">Cogent<span aria-hidden="true">.</span></span>
-            <span class="cogent-eyebrow">Agent session transcript</span>
+            <span class="cogent-wordmark" role="img" aria-label="Cogent">{% include "cogent-wordmark.svg" %}</span>
+            <span class="cogent-product">Agent workspace <span>/</span> Session archive</span>
+            <span class="cogent-local">Local transcript</span>
         </header>
 {%- block content %}{% endblock %}
-        <footer class="cogent-footer">Cogent / Session archive</footer>
+        <footer class="cogent-footer"><span>End of transcript</span><span>Cogent · Agent workspace</span></footer>
     </div>
     <script>{{ js|safe }}</script>
     {% include "message_controls.html" %}

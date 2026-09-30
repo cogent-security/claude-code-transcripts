@@ -8,21 +8,23 @@ Use `json SESSION --single-page -o OUTPUT` for one full conversation in
 reveals all of the message, including long prompts and tool output, and
 **Show less** restores the preview. Header clicks still collapse the entire card.
 
-This fork adds a light Cogent theme: Geist / Geist Mono typography, charcoal
-text, slate metadata, thin borders and restrained orange accents. Fonts are
+This fork uses Cogent's compact light design language: the official wordmark,
+Geist at regular/medium weights, Geist Mono for code and timestamps, inset gray
+surfaces and a narrow message metadata rail. No decorative emoji, colored card
+borders or heavy headings. Fonts are
 bundled under the SIL Open Font License and embedded in the HTML, so no font
 CDN, account, or server is needed. Upstream CLI commands remain unchanged.
 
 Click a message header to collapse or reopen it, or use Tab and Enter/Space.
 Index cards also collapse; **Open conversation** opens the full transcript.
-Existing tool expanders, pagination, timestamps and search remain available.
+Message previews expand as a whole; timestamps and legacy paginated exports remain available.
 Transcripts may contain secrets or customer data; review before sharing.
 
 Install this fork from a reviewed commit (replace `COMMIT_SHA`):
 
 ```sh
 uvx --from 'git+https://github.com/cogent-security/claude-code-transcripts.git@COMMIT_SHA' \
-  claude-code-transcripts json session.jsonl -o ./transcript --open
+  claude-code-transcripts json session.jsonl --single-page -o ./transcript --open
 ```
 
 ---

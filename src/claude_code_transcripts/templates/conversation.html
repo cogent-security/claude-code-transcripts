@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-        <h1>Agent session transcript</h1>
-        <p class="cogent-eyebrow">{{ message_count }} messages · Full conversation</p>
-        {{ messages_html|safe }}
+        <section class="conversation-heading">
+            <div><h1>Session transcript</h1><p>Prompts, reasoning and tool execution.</p></div>
+            <span class="conversation-count"><span>{{ message_count }}</span> messages</span>
+        </section>
+        <main class="conversation-log" aria-label="Full conversation">{{ messages_html|safe }}</main>
         {% if not message_count %}<p>No messages in this session.</p>{% endif %}
 {% endblock %}

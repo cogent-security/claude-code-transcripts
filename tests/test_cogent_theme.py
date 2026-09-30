@@ -11,6 +11,8 @@ def test_cogent_theme_is_self_contained_and_preserves_transcript_controls(tmp_pa
     for page in tmp_path.glob("*.html"):
         html = page.read_text()
         assert 'class="cogent-masthead"' in html
+        assert 'aria-label="Cogent"' in html
+        assert 'viewBox="0 0 1699 375"' in html
         assert "Cogent" in html
         assert "Geist Mono" in html
         assert "--cogent-accent: #d8813e" in html
@@ -46,6 +48,8 @@ def test_single_page_contains_entire_session(tmp_path):
     assert 'class="pagination"' not in html
     assert "Show full message" in html
     assert "max-height: 24rem" in html
+    assert 'class="conversation-heading"' in html
+    assert 'class="conversation-log"' in html
 
 
 def test_single_page_handles_empty_session(tmp_path):
