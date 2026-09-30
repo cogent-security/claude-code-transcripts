@@ -18,6 +18,12 @@ CDN, account, or server is needed. Upstream CLI commands remain unchanged.
 Click a message header to collapse or reopen it, or use Tab and Enter/Space.
 Index cards also collapse; **Open conversation** opens the full transcript.
 Message previews expand as a whole; timestamps and legacy paginated exports remain available.
+Wide Markdown tables scroll sideways, keeping headers and columns readable.
+In single-page exports, consecutive tool calls, replies and reasoning form one
+collapsed activity group with tool names, call count and any reported errors.
+Written assistant responses and user prompts always break the group. Expand it
+to inspect every original record; timestamp links reopen the containing group.
+Reasoning-only messages use one clear **Reasoning** label.
 Transcripts may contain secrets or customer data; review before sharing.
 
 Install this fork from a reviewed commit (replace `COMMIT_SHA`):

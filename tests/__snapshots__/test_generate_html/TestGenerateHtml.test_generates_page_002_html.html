@@ -212,19 +212,19 @@ time { font-size: 10px; font-weight: 400; color: #768393; letter-spacing: -0.15p
 .message-content > :first-child, .assistant-text:first-child, .thinking:first-child { margin-top: 0; }
 .message-content ul, .message-content ol { padding-left: 20px; }
 .message-content li + li { margin-top: 4px; }
-.conversation-log { counter-reset: message; }
-.conversation-log .message { position: relative; padding: 18px 0; counter-increment: message; }
+.conversation-log .message { position: relative; padding: 18px 0; }
 .conversation-log .local-message { min-height: 36px; }
 .conversation-log .local-message > summary { position: absolute; left: 0; top: 18px; width: 122px; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 0 0 0 15px; }
 .conversation-log .local-message > summary::before { content: ''; position: absolute; left: 0; top: 7px; width: 5px; height: 5px; border-right: 1px solid #768393; border-bottom: 1px solid #768393; transform: rotate(-45deg); }
 .conversation-log .local-message[open] > summary::before { content: ''; transform: rotate(45deg); top: 5px; }
-.conversation-log .role-label::after { content: counter(message, decimal-leading-zero); margin-left: 8px; font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 400; color: #768393; }
+.conversation-log .role-label::after { content: attr(data-sequence); margin-left: 8px; font-family: 'Geist Mono', monospace; font-size: 10px; font-weight: 400; color: #768393; }
 .conversation-log .message-preview { margin-left: 148px; }
 .conversation-log .user-content { background: var(--card-bg); border-radius: 6px; padding: 14px 16px; }
 .conversation-log .message-size-toggle { margin: 10px 0 0 148px; padding: 5px 9px; font-size: 12px; font-weight: 400; color: #636d79; border: 1px solid var(--cogent-border); border-radius: 6px; background: transparent; }
 .message-size-toggle:hover { background: #e5e5e5; color: #111111; }
 .thinking { border: 0; border-left: 1px solid #b6c1c7; border-radius: 0; padding: 0 0 0 14px; margin: 14px 0; font-size: 13px; }
 .thinking-label { font-family: 'Geist', sans-serif; color: #636d79; font-size: 11px; font-weight: 500; letter-spacing: 0; text-transform: none; margin-bottom: 4px; }
+.reasoning .thinking-label { display: none; }
 .thinking p { margin: 4px 0; }
 .tool-use, .file-tool, .todo-list { background: var(--card-bg); border: 1px solid var(--cogent-border); border-radius: 6px; padding: 12px; margin: 12px 0; }
 .tool-result, .tool-reply .tool-result { background: transparent; border-radius: 6px; padding: 0; margin: 0; }
@@ -249,6 +249,24 @@ pre.json, pre.json span { color: var(--code-text) !important; }
 table { border-collapse: collapse; width: 100%; font-size: 13px; }
 th, td { padding: 8px 10px; border: 0; border-bottom: 1px solid var(--cogent-border); text-align: left; }
 th { background: var(--card-bg); color: #3d4248; }
+.table-scroll { overflow-x: auto; max-width: 100%; margin: 14px 0; border: 1px solid var(--cogent-border); border-radius: 6px; background: #fff; }
+.table-scroll table { width: max-content; min-width: 100%; margin: 0; }
+.table-scroll th { white-space: nowrap; overflow-wrap: normal; padding: 9px 12px; font-size: 12px; }
+.table-scroll td { min-width: 120px; max-width: 340px; padding: 10px 12px; vertical-align: top; overflow-wrap: break-word; word-break: normal; line-height: 1.5; }
+.table-scroll tr:last-child td { border-bottom: 0; }
+.table-scroll tbody tr:hover { background: #faf6f2; }
+.tool-activity { margin: 10px 0; border: 1px solid var(--cogent-border); border-radius: 6px; }
+.tool-activity > summary { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 9px 13px; cursor: pointer; list-style: none; background: #f6f0e9; border-radius: 6px; font-size: 12px; }
+.tool-activity > summary::-webkit-details-marker { display: none; }
+.tool-activity > summary::before { content: ''; flex: 0 0 5px; height: 5px; border-right: 1px solid #975522; border-bottom: 1px solid #975522; transform: rotate(-45deg); margin-right: 3px; }
+.tool-activity[open] > summary::before { transform: rotate(45deg); }
+.activity-title { font-weight: 500; color: #875025; white-space: nowrap; }
+.activity-names { color: var(--text-muted); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.activity-errors { color: #9b3430; background: #fbe5e1; border-radius: 2px; padding: 0 5px; white-space: nowrap; }
+.activity-hint { margin-left: auto; color: #875025; font-size: 11px; }
+.tool-activity[open] .activity-hint { visibility: hidden; }
+.activity-messages { padding: 0 14px; }
+.activity-messages .message:last-child { border-bottom: 0; }
 blockquote { border-left: 2px solid #b6c1c7; margin-left: 0; padding-left: 14px; color: var(--text-muted); }
 .index-item, .search-result, .commit-card, .index-commit { background: var(--card-bg); border: 1px solid var(--cogent-border); border-radius: 6px; box-shadow: none; }
 .index-item a:hover, .search-result a:hover { background: #e5e5e5; }
@@ -312,7 +330,7 @@ blockquote { border-left: 2px solid #b6c1c7; margin-left: 0; padding-left: 14px;
         
 <div class="message user" id="msg-2025-12-24T10-05-00-000Z"><div class="message-header"><span class="role-label">User</span><a href="#msg-2025-12-24T10-05-00-000Z" class="timestamp-link"><time datetime="2025-12-24T10:05:00.000Z" data-timestamp="2025-12-24T10:05:00.000Z">2025-12-24T10:05:00.000Z</time></a></div><div class="message-content">
 <div class="user-content"><p>Add a multiply function too</p></div></div></div>
-<div class="message assistant" id="msg-2025-12-24T10-05-05-000Z"><div class="message-header"><span class="role-label">Assistant</span><a href="#msg-2025-12-24T10-05-05-000Z" class="timestamp-link"><time datetime="2025-12-24T10:05:05.000Z" data-timestamp="2025-12-24T10:05:05.000Z">2025-12-24T10:05:05.000Z</time></a></div><div class="message-content"><div class="file-tool edit-tool" data-tool-id="toolu_edit_003">
+<div class="message assistant" id="msg-2025-12-24T10-05-05-000Z"><div class="message-header"><span class="role-label">Tool call</span><a href="#msg-2025-12-24T10-05-05-000Z" class="timestamp-link"><time datetime="2025-12-24T10:05:05.000Z" data-timestamp="2025-12-24T10:05:05.000Z">2025-12-24T10:05:05.000Z</time></a></div><div class="message-content"><div class="file-tool edit-tool" data-tool-id="toolu_edit_003">
 <div class="file-tool-header edit-header"><span class="file-tool-icon">✏️</span> Edit <span class="file-tool-path">math_utils.py</span></div>
 <div class="file-tool-fullpath">/project/math_utils.py</div>
 <div class="truncatable"><div class="truncatable-content">
@@ -399,6 +417,8 @@ document.querySelectorAll('.truncatable').forEach(function(wrapper) {
     summary.className = header.className;
     summary.title = 'Click to collapse or expand this message';
     summary.append(...header.childNodes);
+    const label = summary.querySelector('.role-label');
+    if (label) label.dataset.sequence = String(index + 1).padStart(2, '0');
     if (card.classList.contains('index-item')) {
       const originalLink = card.querySelector('a');
       if (originalLink) {
@@ -440,6 +460,10 @@ document.querySelectorAll('.truncatable').forEach(function(wrapper) {
     const target = document.getElementById(location.hash.slice(1));
     const details = target?.closest('.message')?.querySelector('.local-message');
     if (details) details.open = true;
+    for (let ancestor = target?.parentElement; ancestor; ancestor = ancestor.parentElement) {
+      if (ancestor.matches('details')) ancestor.open = true;
+    }
+    if (target) requestAnimationFrame(() => target.scrollIntoView({ block: 'start' }));
   };
   window.addEventListener('hashchange', revealLinkedMessage);
   revealLinkedMessage();

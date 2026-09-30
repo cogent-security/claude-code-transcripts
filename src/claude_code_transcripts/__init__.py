@@ -708,7 +708,13 @@ def format_json(obj):
 def render_markdown_text(text):
     if not text:
         return ""
-    return markdown.markdown(text, extensions=["fenced_code", "tables"])
+    rendered = markdown.markdown(text, extensions=["fenced_code", "tables"])
+    return re.sub(
+        r"(<table>.*?</table>)",
+        r'<div class="table-scroll" role="region" aria-label="Scrollable table" tabindex="0">\1</div>',
+        rendered,
+        flags=re.DOTALL,
+    )
 
 
 def is_json_like(text):
@@ -970,6 +976,13 @@ def render_message(log_type, message_json, timestamp):
     elif log_type == "assistant":
         content_html = render_assistant_message(message_data)
         role_class, role_label = "assistant", "Assistant"
+        blocks = message_data.get("content")
+        if isinstance(blocks, list) and blocks:
+            kinds = {block.get("type") for block in blocks if isinstance(block, dict)}
+            if kinds == {"thinking"}:
+                role_class, role_label = "assistant reasoning", "Reasoning"
+            elif kinds <= {"thinking", "tool_use"} and "tool_use" in kinds:
+                role_label = "Tool call"
     else:
         return ""
     if not content_html.strip():
@@ -1304,6 +1317,28 @@ def generate_index_pagination_html(total_pages):
 
 def generate_single_page(loglines, output_dir):
     messages = []
+    pending = []
+    tools = []
+    errors = 0
+    message_count = 0
+
+    def flush_activity():
+        nonlocal errors
+        if tools:
+            messages.append(
+                get_template("tool_activity.html").render(
+                    messages_html="".join(pending),
+                    count=len(tools),
+                    names=", ".join(dict.fromkeys(tools)),
+                    errors=errors,
+                )
+            )
+        else:
+            messages.extend(pending)
+        pending.clear()
+        tools.clear()
+        errors = 0
+
     for entry in loglines:
         if entry.get("message"):
             rendered = render_message(
@@ -1312,12 +1347,42 @@ def generate_single_page(loglines, output_dir):
                 entry.get("timestamp", ""),
             )
             if rendered:
-                messages.append(rendered)
+                message_count += 1
+                blocks = entry["message"].get("content")
+                allowed = (
+                    {"thinking", "tool_use"}
+                    if entry.get("type") == "assistant"
+                    else {"tool_result"}
+                )
+                activity = (
+                    isinstance(blocks, list)
+                    and blocks
+                    and all(
+                        isinstance(block, dict) and block.get("type") in allowed
+                        for block in blocks
+                    )
+                )
+                if activity:
+                    pending.append(rendered)
+                    tools.extend(
+                        block.get("name", "Tool")
+                        for block in blocks
+                        if block.get("type") == "tool_use"
+                    )
+                    errors += sum(
+                        bool(block.get("is_error"))
+                        for block in blocks
+                        if block.get("type") == "tool_result"
+                    )
+                else:
+                    flush_activity()
+                    messages.append(rendered)
+    flush_activity()
     content = get_template("conversation.html").render(
-        css=CSS, js=JS, messages_html="".join(messages), message_count=len(messages)
+        css=CSS, js=JS, messages_html="".join(messages), message_count=message_count
     )
     (output_dir / "index.html").write_text(content, encoding="utf-8")
-    print(f"Generated {output_dir.resolve() / 'index.html'} ({len(messages)} messages)")
+    print(f"Generated {output_dir.resolve() / 'index.html'} ({message_count} messages)")
 
 
 def generate_html(json_path, output_dir, github_repo=None, *, single_page=False):

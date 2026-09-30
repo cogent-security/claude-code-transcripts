@@ -1,0 +1,9 @@
+<details class="tool-activity">
+    <summary>
+        <span class="activity-title">{{ count }} tool call{{ 's' if count != 1 else '' }}</span>
+        <span class="activity-names">{{ names }}</span>
+        {% if errors %}<span class="activity-errors">{{ errors }} error{{ 's' if errors != 1 else '' }}</span>{% endif %}
+        <span class="activity-hint">Details</span>
+    </summary>
+    <div class="activity-messages">{{ messages_html|safe }}</div>
+</details>
