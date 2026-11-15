@@ -2,6 +2,11 @@
 
 ## Cogent edition
 
+The `json` command also accepts native Codex rollout JSONL directly. The renderer
+normalizes messages, reasoning and tool events, deduplicating event/response pairs
+while preserving errors. Source files are never rewritten. Callers do not need a
+separate trace converter.
+
 Use `json SESSION --single-page -o OUTPUT` for one full conversation in
 `index.html`, without an index or pagination. This is the mode used by
 `generate_candidate`. Messages preview at up to 24rem tall; **Show full message**
