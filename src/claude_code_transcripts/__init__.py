@@ -474,6 +474,7 @@ def parse_session_file(filepath):
 def _parse_jsonl_file(filepath):
     """Parse JSONL file and convert to standard format."""
     loglines = []
+    native = []
 
     with open(filepath, "r", encoding="utf-8") as f:
         for line in f:
@@ -483,6 +484,8 @@ def _parse_jsonl_file(filepath):
             try:
                 obj = json.loads(line)
                 entry_type = obj.get("type")
+                if entry_type in {"response_item", "event_msg", "session_meta"}:
+                    native.append(obj)
 
                 # Skip non-message entries
                 if entry_type not in ("user", "assistant"):
@@ -503,6 +506,10 @@ def _parse_jsonl_file(filepath):
             except json.JSONDecodeError:
                 continue
 
+    if native:
+        from .codex import normalize_codex_rows
+
+        loglines = normalize_codex_rows(native)
     return {"loglines": loglines}
 
 
